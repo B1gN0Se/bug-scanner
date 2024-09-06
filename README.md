@@ -8,7 +8,7 @@ Follow the commands below to run the scanner
 git clone https://github.com/b1gn0se/bug-scanner
 ```
 ```sh
-cd bug-scanner && pip3 install -r requirements && pip3 install prompt_toolkit
+cd bug-scanner && pip3 install -r requirements.txt && pip3 install prompt_toolkit
 ```
 ```sh
 python3 xlsNinja.py
