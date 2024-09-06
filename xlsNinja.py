@@ -105,7 +105,7 @@ try:
    /_/|_/_/____/_/ |_/_/_/ /_/_/ /\__,_/  
                             /___/         
    
-  Credit - AnonKryptiQuz x Coffinxp x Hexsh1dow x Naho
+  
             """,
             style="bold green",
             border_style="blue",
@@ -219,12 +219,12 @@ try:
                                 print(f"{Fore.RED}[!] You must provide either a file with URLs or a single URL.")
                                 input(f"{Fore.YELLOW}\n[i] Press Enter to try again...")
                                 clear_screen()
-                                print(f"{Fore.GREEN}Welcome to the xlsNinja SQL-Injector! -AnonKryptiQuz x Coffinxp x Hexsh1dow x Naho\n")
+                                print(f"{Fore.GREEN}Welcome to the xlsNinja SQL-Injector!\n")
                     except Exception as e:
                         print(f"{Fore.RED}[!] Error reading input file: {url_input}. Exception: {str(e)}")
                         input(f"{Fore.YELLOW}[i] Press Enter to try again...")
                         clear_screen()
-                        print(f"{Fore.GREEN}Welcome to the xlsNinja SQL-Injector! -AnonKryptiQuz x Coffinxp x Hexsh1dow x Naho\n")
+                        print(f"{Fore.GREEN}Welcome to the xlsNinja SQL-Injector!\n")
 
             def prompt_for_payloads():
                 while True:
@@ -239,7 +239,7 @@ try:
                         print(f"{Fore.RED}[!] Error reading payload file: {payload_input}. Exception: {str(e)}")
                         input(f"{Fore.YELLOW}[i] Press Enter to try again...")
                         clear_screen()
-                        print(f"{Fore.GREEN}Welcome to the xlsNinja SQL-Injector! -AnonKryptiQuz x Coffinxp x Hexsh1dow x Naho \n")
+                        print(f"{Fore.GREEN}Welcome to the xlsNinja SQL-Injector!\n")
 
             def print_scan_summary(total_found, total_scanned, start_time):
                 print(f"{Fore.YELLOW}\n[i] Scanning finished.")
@@ -634,13 +634,13 @@ try:
                             input(f"{Fore.YELLOW}[i] Press Enter to try again...")
                             clear_screen()
 
-                            print(f"{Fore.GREEN}Welcome to the xlsNinja XSS-Scanner! - AnonKryptiQuz x Coffinxp x Hexsh1dow x Naho\n")
+                            print(f"{Fore.GREEN}Welcome to the xlsNinja XSS-Scanner!\n")
                 except Exception as e:
                     print(f"{Fore.RED}[!] Error reading input file: {url_input}. Exception: {str(e)}")
                     input(f"{Fore.YELLOW}[i] Press Enter to try again...")
                     clear_screen()
 
-                    print(f"{Fore.GREEN}Welcome to the xlsNinja XSS-Scanner! - AnonKryptiQuz x Coffinxp x Hexsh1dow x Naho\n")
+                    print(f"{Fore.GREEN}Welcome to the xlsNinja XSS-Scanner!\n")
 
         def prompt_for_valid_file_path(prompt_text):
             while True:
@@ -649,7 +649,7 @@ try:
                     print(f"{Fore.RED}[!] You must provide a file containing the Payloads.")
                     input(f"{Fore.YELLOW}[i] Press Enter to try again...")
                     clear_screen()
-                    print(f"{Fore.GREEN}Welcome to the xlsNinja XSS-Scanner! - AnonKryptiQuz x Coffinxp x Hexsh1dow x Naho\n")
+                    print(f"{Fore.GREEN}Welcome to the xlsNinja XSS-Scanner!\n")
                     continue
                 if os.path.isfile(file_path):
                     return file_path
@@ -657,7 +657,7 @@ try:
                     print(f"{Fore.RED}[!] Error reading input file: {file_path}.")
                     input(f"{Fore.YELLOW}[i] Press Enter to try again...")
                     clear_screen()
-                    print(f"{Fore.GREEN}Welcome to the xlsNinja XSS-Scanner! - AnonKryptiQuz x Coffinxp x Hexsh1dowx Naho\n")
+                    print(f"{Fore.GREEN}Welcome to the xlsNinja XSS-Scanner!\n")
 
         def main():
             clear_screen()
@@ -1033,7 +1033,7 @@ try:
                     print(Fore.RED + f"[!] Error reading input file: {url_input}. Exception: {str(e)}")
                     input(Fore.YELLOW + "[i] Press Enter to try again...")
                     clear_screen()
-                    print(Fore.GREEN + "Welcome to the LFI Testing Tool! -AnonKryptiQuz x Coffinxp x Hexsh1dow\n")
+                    print(Fore.GREEN + "Welcome to the LFI Testing Tool!\n")
 
         def prompt_for_payloads():
             while True:
