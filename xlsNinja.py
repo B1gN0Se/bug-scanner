@@ -85,7 +85,7 @@ try:
             print(border_color + "│" + option_color + option.ljust(59) + border_color + "│")
         
         print(border_color + "└" + "─" * 61 + "┘")
-        authors = "Modified by B1gN0Se"
+        authors = "Changed By: B1gN0Se"
         instructions = "Select an option by entering the corresponding number:"
         
         print(Fore.WHITE + Style.BRIGHT + "─" * 63)
@@ -1466,7 +1466,7 @@ try:
             urls = prompt_for_urls()
             payloads = prompt_for_payloads()
             success_criteria_input = input("[?] Enter the success criteria patterns (comma-separated, e.g: 'root:,admin:', press Enter for 'root:'): ").strip()
-            success_criteria = [pattern.strip() for pattern in success_criteria_input.split(',')] if success_criteria_input else ['root:']
+            success_criteria = [pattern.strip() for pattern in success_criteria_input.split(',')] if success_criteria_input else ['root:x:0:']
             
             max_threads_input = input("[?] Enter the number of concurrent threads (0-10, press Enter for 5): ").strip()
             max_threads = int(max_threads_input) if max_threads_input.isdigit() and 0 <= int(max_threads_input) <= 10 else 5
