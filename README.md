@@ -1,5 +1,9 @@
 ## bug-scanner
 
+====================================================
+**XSS not working for now, working on this**
+====================================================
+
 Features: LFI, XSS, SQLI and Open Redirect.
 
 Follow the commands below to run the scanner
