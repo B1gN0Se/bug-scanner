@@ -11,7 +11,7 @@ git clone https://github.com/b1gn0se/bug-scanner
 cd bug-scanner
 ```
 ```sh
-pip3 install -r requirements.txt && pip3 install prompt_toolkit && pip3 install selenium
+pip3 install -r requirements.txt && pip3 install prompt_toolkit && pip3 install selenium && pip3 install webdriver_manager
 ```
 ```sh
 python3 xlsNinja.py
