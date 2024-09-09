@@ -1,9 +1,5 @@
 ## bug-scanner
 
-
-# **XSS not working for now, working on this**
-
-
 Features: LFI, XSS, SQLI and Open Redirect.
 
 Follow the commands below to run the scanner
@@ -15,7 +11,7 @@ git clone https://github.com/b1gn0se/bug-scanner
 cd bug-scanner
 ```
 ```sh
-pip3 install -r requirements.txt && pip3 install prompt_toolkit && pip3 install selenium && pip3 install webdriver_manager
+pip3 install -r requirements.txt && pip3 install prompt_toolkit && pip3 install selenium && pip3 install webdriver_manager && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && apt -y install ./google-chrome-stable_current_amd64.deb && rm google-chrome-stable_current_amd64.deb
 ```
 ```sh
 python3 xlsNinja.py
