@@ -1,5 +1,7 @@
 ## bug-scanner
 
+# CURRENTLY NOT WORKING, UNDER MAINTENANCE
+
 Features: LFI, XSS, SQLI and Open Redirect.
 
 Follow the commands below to run the scanner
