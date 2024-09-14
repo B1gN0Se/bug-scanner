@@ -14,7 +14,7 @@ cd bug-scanner
 pip3 install -r requirements.txt && pip3 install webdriver_manager && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && apt -y install ./google-chrome-stable_current_amd64.deb && rm google-chrome-stable_current_amd64.deb
 ```
 ```sh
-python3 xlsNinja.py
+python3 bug-scanner.py
 ```
 
 **Note: To run the scanner correctly, always pass the URLs with empty parameters!**
