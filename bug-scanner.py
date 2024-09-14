@@ -1,10 +1,3 @@
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from curses import panel
-import random
-import re
-from wsgiref import headers
-
-
 class Color:
     BLUE = '\033[94m'
     GREEN = '\033[1;92m'
@@ -21,27 +14,46 @@ class Color:
 
 try:
     import os
+    import requests
+    from git import Repo
+    import yaml
+    import shutil
     import sys
+    from urllib.parse import urlsplit
     import subprocess
+    from urllib.parse import urlunsplit
+    import asyncio
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    from curses import panel
+    import random
+    import re
+    from wsgiref import headers
     from colorama import Fore, Style, init
     from time import sleep
     from rich import print as rich_print
     from rich.panel import Panel
     from rich.table import Table
-    import concurrent.futures
-    from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+    from urllib.parse import urlparse, parse_qs, urlencode, urlunparse, quote
     from bs4 import BeautifulSoup
-    import time
-    import requests
     import urllib3
     from prompt_toolkit import prompt
     from prompt_toolkit.completion import PathCompleter
-    import subprocess
-    import sys
-    import random
-    from urllib.parse import urlparse, quote
-
-
+    import logging
+    from requests.adapters import HTTPAdapter
+    from urllib3.util.retry import Retry
+    import argparse
+    import concurrent.futures
+    import time
+    import aiohttp
+    from selenium import webdriver
+    from selenium.webdriver.chrome.service import Service as ChromeService
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.chrome.options import Options
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+    from webdriver_manager.chrome import ChromeDriverManager
+    from selenium.common.exceptions import TimeoutException
+    from concurrent.futures import ThreadPoolExecutor
 
     init(autoreset=True)
 
@@ -55,16 +67,15 @@ try:
     def clear_screen():
         os.system('cls' if os.name == 'nt' else 'clear')
 
-
-
     def display_menu():
         title = r"""
-    ██╗  ██╗██╗     ███████╗███╗   ██╗██╗███╗   ██╗     ██╗ █████╗ 
-    ╚██╗██╔╝██║     ██╔════╝████╗  ██║██║████╗  ██║     ██║██╔══██╗
-    ╚███╔╝ ██║     ███████╗██╔██╗ ██║██║██╔██╗ ██║     ██║███████║
-    ██╔██╗ ██║     ╚════██║██║╚██╗██║██║██║╚██╗██║██   ██║██╔══██║
-    ██╔╝ ██╗███████╗███████║██║ ╚████║██║██║ ╚████║╚█████╔╝██║  ██║
-    ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚════╝ ╚═╝  ╚═╝
+___.                                                                           
+\_ |__  __ __  ____             ______ ____ _____    ____   ____   ___________ 
+ | __ \|  |  \/ ___\   ______  /  ___// ___\\__  \  /    \ /    \_/ __ \_  __ \
+ | \_\ \  |  / /_/  > /_____/  \___ \\  \___ / __ \|   |  \   |  \  ___/|  | \/
+ |___  /____/\___  /          /____  >\___  >____  /___|  /___|  /\___  >__|   
+     \/     /_____/                \/     \/     \/     \/     \/     \/       
+ 
     """
         print(Color.ORANGE + Style.BRIGHT + title.center(63))
         print(Fore.WHITE + Style.BRIGHT + "─" * 63)
@@ -74,18 +85,19 @@ try:
         print(border_color + "┌" + "─" * 61 + "┐")
         
         options = [
-            "1] LFI Scanner",
+            "1] LFi Scanner",
             "2] OR Scanner",
-            "3] SQL Scanner",
+            "3] SQLi Scanner",
             "4] XSS Scanner",
-            "5] Exit"
+            "5] tool Update",
+            "6] Exit"
         ]
         
         for option in options:
             print(border_color + "│" + option_color + option.ljust(59) + border_color + "│")
         
         print(border_color + "└" + "─" * 61 + "┘")
-        authors = "Changed By: B1gN0Se"
+        authors = "Changed by: B1gN0Se "
         instructions = "Select an option by entering the corresponding number:"
         
         print(Fore.WHITE + Style.BRIGHT + "─" * 63)
@@ -97,42 +109,25 @@ try:
     def print_exit_menu():
         clear_screen()
 
-        panel = Panel(
-            r"""
-           __     _   ___         _      
-     _  __/ /____/ | / (_)___    (_)___ _
-    | |/_/ / ___/  |/ / / __ \  / / __ `/
-    _>  </ (__  ) /|  / / / / / / / /_/ / 
-   /_/|_/_/____/_/ |_/_/_/ /_/_/ /\__,_/  
-                            /___/         
+        panel = Panel("""
+ ______               ______              
+|   __ \.--.--.-----.|   __ \.--.--.-----.
+|   __ <|  |  |  -__||   __ <|  |  |  -__|
+|______/|___  |_____||______/|___  |_____|
+        |_____|              |_____|      
    
             """,
             style="bold green",
             border_style="blue",
             expand=False
         )
+
         rich_print(panel)
-        print(Color.RED + "\n\nSession Off ...\n")
+        print(Color.RED + "\n\nSession Off..\n")
         exit()
 
     def run_sql_scanner():
-        try:
-            import requests
-            import logging
-            from requests.adapters import HTTPAdapter
-            from urllib3.util.retry import Retry
-            import urllib3
-            import time
-            import concurrent.futures
-            from colorama import Fore, init
-            import os
-            from prompt_toolkit import prompt
-            from prompt_toolkit.completion import PathCompleter
-            import subprocess
-            import sys
-            import random
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
             init(autoreset=True)
 
             USER_AGENTS = [
@@ -178,13 +173,6 @@ try:
             }
             def get_random_user_agent():
                 return random.choice(USER_AGENTS)
-
-            def check_and_install_packages(packages):
-                for package, version in packages.items():
-                    try:
-                        __import__(package)
-                    except ImportError:
-                        subprocess.check_call([sys.executable, '-m', 'pip', 'install', f"{package}=={version}"])
 
             def clear_screen():
                 os.system('cls' if os.name == 'nt' else 'clear')
@@ -286,12 +274,12 @@ try:
                                 print(f"{Fore.RED}[!] You must provide either a file with URLs or a single URL.")
                                 input(f"{Fore.YELLOW}\n[i] Press Enter to try again...")
                                 clear_screen()
-                                print(f"{Fore.GREEN}Welcome to the xlsNinja SQL-Injector!\n")
+                                print(f"{Fore.GREEN}Welcome to the Lostxlso SQL-Injector!\n")
                     except Exception as e:
                         print(f"{Fore.RED}[!] Error reading input file: {url_input}. Exception: {str(e)}")
                         input(f"{Fore.YELLOW}[i] Press Enter to try again...")
                         clear_screen()
-                        print(f"{Fore.GREEN}Welcome to the xlsNinja SQL-Injector!\n")
+                        print(f"{Fore.GREEN}Welcome to the Lostxlso SQL-Injector!\n")
 
             def prompt_for_payloads():
                 while True:
@@ -306,7 +294,7 @@ try:
                         print(f"{Fore.RED}[!] Error reading payload file: {payload_input}. Exception: {str(e)}")
                         input(f"{Fore.YELLOW}[i] Press Enter to try again...")
                         clear_screen()
-                        print(f"{Fore.GREEN}Welcome to the xlsNinja SQL-Injector!\n")
+                        print(f"{Fore.GREEN}Welcome to the Lostxlso SQL-Injector!\n")
 
             def print_scan_summary(total_found, total_scanned, start_time):
                 print(f"{Fore.YELLOW}\n[i] Scanning finished.")
@@ -314,26 +302,12 @@ try:
                 print(f"{Fore.YELLOW}[i] Total scanned: {total_scanned}")
                 print(f"{Fore.YELLOW}[i] Time taken: {int(time.time() - start_time)} seconds")
 
-
-
-
-
             def main():
                 clear_screen()
-                required_packages = {
-                    'requests': '2.28.1',
-                    'prompt_toolkit': '3.0.36',
-                    'colorama': '0.4.6'
-                }
-
-                check_and_install_packages(required_packages)
-
-
-                time.sleep(3)
+                time.sleep(1)
                 clear_screen()
 
-                panel = Panel(
-            r"""                                                       
+                panel = Panel("""                                                       
                ___                                         
    _________ _/ (_)  ______________ _____  ____  ___  _____
   / ___/ __ `/ / /  / ___/ ___/ __ `/ __ \/ __ \/ _ \/ ___/
@@ -357,7 +331,7 @@ try:
 
                 threads = int(input("[?] Enter the number of concurrent threads (0-10, press Enter for 5): ").strip() or 5)
                 print(f"\n{Fore.YELLOW}[i] Loading, Please Wait...")
-                time.sleep(3)
+                time.sleep(1)
                 clear_screen()
                 print(f"{Fore.CYAN}[i] Starting scan...")
                 vulnerable_urls = []
@@ -503,46 +477,17 @@ try:
                     sys.exit(0)
 
             if __name__ == "__main__":
-                sys.excepthook = handle_exception
-                main()
-
-        except KeyboardInterrupt:
-            print(f"\n{Fore.YELLOW}Program terminated by the user!")
-            sys.exit(0)
+                try:
+                    loop = asyncio.get_event_loop()
+                    loop.run_until_complete(main())
+                except KeyboardInterrupt:
+                    sys.exit(0)
 
 
 
     def run_xss_scanner():
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-        import argparse
-        import subprocess
-        import sys
-        import time
-        import aiohttp
-        import asyncio
-        import logging
-        import os
-        from colorama import Fore, init
-        from urllib.parse import urlencode, parse_qs, urlsplit, urlunsplit
-        from prompt_toolkit import prompt
-        from prompt_toolkit.completion import PathCompleter
-        from rich import print as rich_print
-        from rich.panel import Panel
-        from rich.table import Table
-        from requests.adapters import HTTPAdapter
-        from urllib3.util.retry import Retry
-        from selenium import webdriver
-        from selenium.webdriver.chrome.service import Service as ChromeService
-        from selenium.webdriver.common.by import By
-        from selenium.webdriver.chrome.options import Options
-        from selenium.webdriver.support.ui import WebDriverWait
-        from selenium.webdriver.support import expected_conditions as EC
-        from webdriver_manager.chrome import ChromeDriverManager
-        import logging
         logging.getLogger('WDM').setLevel(logging.ERROR)
-
-
         init(autoreset=True)
         logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -587,12 +532,6 @@ try:
             'Wallarm': ['x-wallarm-waf-check', 'wallarm'],
         }
 
-        def check_and_install_packages(packages):
-            for package, version in packages.items():
-                try:
-                    __import__(package)
-                except ImportError:
-                    subprocess.check_call([sys.executable, '-m', 'pip', 'install', f"{package}=={version}"])
 
         def clear_screen():
             os.system('cls' if os.name == 'nt' else 'clear')
@@ -707,16 +646,14 @@ try:
                     except Exception as e:
                         logging.error(f"Error fetching {url}: {str(e)}")
                             
-                    await asyncio.sleep(0)
+                    await asyncio.sleep(1)
                     return (response_text, url)
 
             def process_tasks(self, done):
                 for response_text, url in done:
                     self.totalScanned += 1
                     chrome_options = Options()
-                    chrome_options.add_argument("--headless")
-                    chrome_options.add_argument("--no-sandbox")
-                    chrome_options.add_argument("--disable-dev-shm-usage")
+                    chrome_options.add_argument("--headless") 
                     service = ChromeService(executable_path=ChromeDriverManager().install())
                     driver = webdriver.Chrome(service=service, options=chrome_options)
 
@@ -777,24 +714,26 @@ try:
 
             def run(self):
                 asyncio.run(self.scan())
+                try:
+                    print(f"{Fore.YELLOW}\n[i] Scanning finished.")
+                    print(f"{Fore.YELLOW}[i] Total scanned: {self.totalScanned}")
+                    print(f"{Fore.YELLOW}[i] Time taken: {int(time.time() - self.t0)} seconds\n")
+                    print(f"{Fore.GREEN}[i] Vulnerabilities found: {len(self.injectables)}")
 
-                print(f"{Fore.YELLOW}\n[i] Scanning finished.")
-                print(f"{Fore.YELLOW}[i] Total scanned: {self.totalScanned}")
-                print(f"{Fore.YELLOW}[i] Time taken: {int(time.time() - self.t0)} seconds\n")
-                print(f"{Fore.GREEN}[i] Vulnerabilities found: {len(self.injectables)}")
-
-                if self.injectables:  
-                    save_option = input(f"{Fore.CYAN}[?] Do you want to save the vulnerable URLs to {self.output}? (y/n, press Enter for n): ").strip().lower()
-                    if save_option == 'y':
-                        self.save_injectables_to_file()
-                        os._exit(0)
+                    if self.injectables:  
+                        save_option = input(f"{Fore.CYAN}[?] Do you want to save the vulnerable URLs to {self.output}? (y/n, press Enter for n): ").strip().lower()
+                        if save_option == 'y':
+                            self.save_injectables_to_file()
+                            os._exit(0)
+                        else:
+                            print(f"{Fore.YELLOW}Vulnerable URLs will not be saved.")
+                            os._exit(0)
                     else:
-                        print(f"{Fore.YELLOW}Vulnerable URLs will not be saved.")
+                        print(f"{Fore.YELLOW}No vulnerabilities found. No URLs to save.")
                         os._exit(0)
-                else:
-                    print(f"{Fore.YELLOW}No vulnerabilities found. No URLs to save.")
-                    os._exit(0)
 
+                except KeyboardInterrupt:
+                    sys.exit(0)
 
                                     
             def save_injectables_to_file(self):
@@ -825,13 +764,13 @@ try:
                             input(f"{Fore.YELLOW}[i] Press Enter to try again...")
                             clear_screen()
 
-                            print(f"{Fore.GREEN}Welcome to the xlsNinja XSS-Scanner!\n")
+                            print(f"{Fore.GREEN}Welcome to the Lostxlso XSS-Scanner!\n")
                 except Exception as e:
                     print(f"{Fore.RED}[!] Error reading input file: {url_input}. Exception: {str(e)}")
                     input(f"{Fore.YELLOW}[i] Press Enter to try again...")
                     clear_screen()
 
-                    print(f"{Fore.GREEN}Welcome to the xlsNinja XSS-Scanner!\n")
+                    print(f"{Fore.GREEN}Welcome to the Lostxlso XSS-Scanner!\n")
 
         def prompt_for_valid_file_path(prompt_text):
             while True:
@@ -840,7 +779,7 @@ try:
                     print(f"{Fore.RED}[!] You must provide a file containing the Payloads.")
                     input(f"{Fore.YELLOW}[i] Press Enter to try again...")
                     clear_screen()
-                    print(f"{Fore.GREEN}Welcome to the xlsNinja XSS-Scanner!\n")
+                    print(f"{Fore.GREEN}Welcome to the Lostxlso XSS-Scanner!\n")
                     continue
                 if os.path.isfile(file_path):
                     return file_path
@@ -848,22 +787,13 @@ try:
                     print(f"{Fore.RED}[!] Error reading input file: {file_path}.")
                     input(f"{Fore.YELLOW}[i] Press Enter to try again...")
                     clear_screen()
-                    print(f"{Fore.GREEN}Welcome to the xlsNinja XSS-Scanner!\n")
+                    print(f"{Fore.GREEN}Welcome to the Lostxlso XSS-Scanner!\n")
 
         def main():
             clear_screen()
-            required_packages = {
-                'aiohttp': '3.8.6',
-                'requests': '2.28.1',
-                'prompt_toolkit': '3.0.36',
-                'colorama': '0.4.6'
-            }
-
-            check_and_install_packages(required_packages)
-            
-            time.sleep(3)
+            time.sleep(1)
             clear_screen()
-            panel = Panel(r"""
+            panel = Panel("""
    _  __________  ____________   _  ___  __________
   | |/_/ __/ __/ / __/ ___/ _ | / |/ / |/ / __/ _  |
  _>  <_\ \_\ \  _\ \/ /__/ __ |/    /    / _// , _/
@@ -887,7 +817,7 @@ try:
             timeout = float(input("[?] Enter the request timeout in seconds (press Enter for 3): ").strip() or 3)
                                 
             print(f"\n{Fore.YELLOW}[i] Loading, Please Wait...")
-            time.sleep(3)
+            time.sleep(1)
             clear_screen()
             print(f"{Fore.CYAN}[i] Starting scan...")
             print(f"{Fore.CYAN}[i] Checking for WAF on target URLs...")
@@ -914,321 +844,209 @@ try:
                 sys.exit(0)
 
 
+
     def run_or_scanner():
 
-        try:
-            import requests
-            import urllib.parse
-            import os
-            import sys
-            import subprocess
-            import logging
-            import time
-            from concurrent.futures import ThreadPoolExecutor, as_completed
-            from prompt_toolkit import prompt
-            from prompt_toolkit.completion import PathCompleter
-            from colorama import Fore, init
-            from requests.adapters import HTTPAdapter
-            from urllib3.util.retry import Retry
-            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        init(autoreset=True)
 
-            init(autoreset=True)
+        def get_chrome_driver():
+            options = Options()
+            options.add_argument("--headless")
+            options.add_argument("--no-sandbox")
+            options.add_argument("--disable-dev-shm-usage")
+            options.add_argument("--disable-gpu")
+            options.add_argument("--disable-extensions")
+            options.add_argument("--window-size=1920,1080")
+            from selenium.webdriver.chrome.service import Service
 
-            USER_AGENTS = [
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Version/14.1.2 Safari/537.36",
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/91.0.864.70",
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Firefox/89.0",
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0",
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0) Gecko/20100101 Firefox/91.0",
-                "Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36",
-                "Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Mobile Safari/537.36",
-                    ]
-            WAF_SIGNATURES = {
-                'Cloudflare': ['cf-ray', 'cloudflare', 'cf-request-id', 'cf-cache-status'],
-                'Akamai': ['akamai', 'akamai-ghost', 'akamai-x-cache', 'x-akamai-request-id'],
-                'Sucuri': ['x-sucuri-id', 'sucuri', 'x-sucuri-cache'],
-                'ModSecurity': ['mod_security', 'modsecurity', 'x-modsecurity-id', 'x-mod-sec-rule'],
-                'Barracuda': ['barra', 'x-barracuda', 'bnmsg'],
-                'Imperva': ['x-cdn', 'imperva', 'incapsula', 'x-iinfo', 'x-cdn-forward'],
-                'F5 Big-IP ASM': ['x-waf-status', 'f5', 'x-waf-mode', 'x-asm-ver'],
-                'DenyAll': ['denyall', 'sessioncookie'],
-                'FortiWeb': ['fortiwafsid', 'x-fw-debug'],
-                'Jiasule': ['jsluid', 'jiasule'],
-                'AWS WAF': ['awswaf', 'x-amzn-requestid', 'x-amzn-trace-id'],
-                'StackPath': ['stackpath', 'x-sp-url', 'x-sp-waf'],
-                'BlazingFast': ['blazingfast', 'x-bf-cache-status', 'bf'],
-                'NSFocus': ['nsfocus', 'nswaf', 'nsfocuswaf'],
-                'Edgecast': ['ecdf', 'x-ec-custom-error'],
-                'Alibaba Cloud WAF': ['ali-cdn', 'alibaba'],
-                'AppTrana': ['apptrana', 'x-wf-sid'],
-                'Radware': ['x-rdwr', 'rdwr'],
-                'SafeDog': ['safedog', 'x-sd-id'],
-                'Comodo WAF': ['x-cwaf', 'comodo'],
-                'Yundun': ['yundun', 'yunsuo'],
-                'Qiniu': ['qiniu', 'x-qiniu'],
-                'NetScaler': ['netscaler', 'x-nsprotect'],
-                'Securi': ['x-sucuri-id', 'sucuri', 'x-sucuri-cache'],
-                'Reblaze': ['x-reblaze-protection', 'reblaze'],
-                'Microsoft Azure WAF': ['azure', 'x-mswaf', 'x-azure-ref'],
-                'NAXSI': ['x-naxsi-sig'],
-                'Wallarm': ['x-wallarm-waf-check', 'wallarm'],
-            }
+            service = Service(ChromeDriverManager().install())
+            driver = webdriver.Chrome(service=service, options=options)
+            driver.set_page_load_timeout(10)
+            return driver
 
-            def get_random_user_agent():
-                return random.choice(USER_AGENTS)
-
-            def get_retry_session(retries=3, backoff_factor=0.3, status_forcelist=(500, 502, 504)):
-                session = requests.Session()
-                retry = Retry(
-                    total=retries,
-                    read=retries,
-                    connect=retries,
-                    backoff_factor=backoff_factor,
-                    status_forcelist=status_forcelist,
-                )
-                adapter = HTTPAdapter(max_retries=retry)
-                session.mount('http://', adapter)
-                session.mount('https://', adapter)
-                return session
-            
-            def detect_waf(url, headers):
-                session = get_retry_session()
-                waf_detected = None
-
-                try:
-                    response = session.get(url, headers=headers, verify=False)
-                    for waf_name, waf_identifiers in WAF_SIGNATURES.items():
-                        if any(identifier in response.headers.get('server', '').lower() for identifier in waf_identifiers):
-                            print(f"{Fore.GREEN}[+] WAF Detected: {waf_name}{Fore.RESET}")
-                            waf_detected = waf_name
-                            break
-                except requests.exceptions.RequestException as e:
-                    logging.error(f"Error detecting WAF: {e}")
-
-                if not waf_detected:
-                    print(f"{Fore.GREEN}[+] No WAF detected.{Fore.RESET}")
-            
-
-            def check_and_install_packages(packages):
-                for package, version in packages.items():
-                    try:
-                        __import__(package)
-                    except ImportError:
-                        subprocess.check_call([sys.executable, '-m', 'pip', 'install', f"{package}=={version}"])
-
-            def test_open_redirect(url, payloads, success_criteria, max_threads=5):
-                def check_payload(payload):
-                    target_url = f"{url}{payload.strip()}"
-                    
-                    try:
-                        response = requests.get(target_url, allow_redirects=False)
-                        result = None
-                        is_vulnerable = False
-                        
-                        if 'Location' in response.headers:
-                            location = response.headers['Location']
-                            is_vulnerable = any(crit in location for crit in success_criteria)
-                            if is_vulnerable:
-                                result = Fore.GREEN + f"[+] Vulnerable: {target_url} redirects to {location}"
-                            else:
-                                result = Fore.RED + f"[-] Not Vulnerable: {target_url}"
-                        else:
-                            result = Fore.RED + f"[-] No Redirect: {target_url}"
-
-                        return result, is_vulnerable
-                    except requests.exceptions.RequestException:
-                        result = Fore.RED + f"[-] No Redirect: {target_url}"
-                        return result, False
-
-                found_vulnerabilities = 0
-                vulnerable_urls = []
-                with ThreadPoolExecutor(max_workers=max_threads) as executor:
-                    future_to_payload = {executor.submit(check_payload, payload): payload for payload in payloads}
-                    for future in as_completed(future_to_payload):
-                        payload = future_to_payload[future]
-                        try:
-                            result, is_vulnerable = future.result()
-                            if result:
-                                print(Fore.YELLOW + f"\n[i] Scanning with payload: {payload.strip()}")
-                                print(result)
-                                if is_vulnerable:
-                                    found_vulnerabilities += 1
-                                    vulnerable_urls.append(url + payload.strip())
-                        except Exception as e:
-                            print(Fore.RED + f"[!] Exception occurred for payload {payload}: {str(e)}")
-                return found_vulnerabilities, vulnerable_urls
-
-            def save_results(vulnerable_urls):
-                save_prompt(vulnerable_urls)
-
-            def save_prompt(vulnerable_urls=[]):
-                save_choice = input(Fore.CYAN + "\n[?] Do you want to save the vulnerable URLs to a file? (y/n, press Enter for n): ").strip().lower()
-                if save_choice == 'y':
-                    output_file = input(Fore.CYAN + "Enter the name of the output file (press Enter for 'vulnerable_urls.txt'): ").strip() or 'vulnerable_urls.txt'
-                    with open(output_file, 'w') as f:
-                        for url in vulnerable_urls:
-                            f.write(url + '\n')
-                    print(Fore.GREEN + f"Vulnerable URLs have been saved to {output_file}")
-                    os._exit(0)
+        def check_payload_with_selenium(url, payload):
+            target_url = f"{url}{payload.strip()}"
+            driver = None
+            try:
+                driver = get_chrome_driver()
+                print(Fore.YELLOW + f"[i] Testing payload: {payload.strip()} on {target_url}")
+                driver.get(target_url)
+                time.sleep(2)
+                current_url = driver.current_url
+                
+                if current_url == "https://www.google.com/":
+                    return Fore.GREEN + f"[+] Vulnerable: {target_url} redirects to {current_url}", True
                 else:
-                    print(Fore.YELLOW + "Vulnerable URLs will not be saved.")
-                    os._exit(0)
+                    return Fore.RED + f"[-] Not Vulnerable: {target_url} (redirects to {current_url})", False
 
-            def prompt_for_urls():
-                while True:
+            except TimeoutException:
+                return Fore.RED + f"[-] Timeout occurred while testing payload: {payload.strip()} on {target_url}", False
+
+            except Exception as e:
+                return Fore.RED + f"[-] Error for payload {payload}: {str(e)}", False
+
+            finally:
+                if driver:
+                    driver.quit()
+
+        def test_open_redirect(url, payloads, max_threads=5):
+            found_vulnerabilities = 0
+            vulnerable_urls = []
+
+            with ThreadPoolExecutor(max_workers=max_threads) as executor:
+                future_to_payload = {executor.submit(check_payload_with_selenium, url, payload): payload for payload in payloads}
+                for future in as_completed(future_to_payload):
+                    payload = future_to_payload[future]
                     try:
-                        url_input = get_file_path("[?] Enter the path to the input file containing the URLs (or press Enter to input a single URL): ")
-                        if url_input:
-                            if not os.path.isfile(url_input):
-                                raise FileNotFoundError(f"File not found: {url_input}")
-                            with open(url_input) as file:
-                                urls = [line.strip() for line in file if line.strip()]
-                            return urls
-                        else:
-                            single_url = input(Color.BLUE + "[?] Enter a single URL to scan: ").strip()
-                            if single_url:
-                                return [single_url]
-                            else:
-                                print(Fore.RED + "[!] You must provide either a file with URLs or a single URL.")
-                                input(Fore.YELLOW + "\n[i] Press Enter to try again...")
-                                clear_screen()
-                                print(Fore.GREEN + "Welcome to the Open Redirect Testing Tool!\n")
+                        result, is_vulnerable = future.result()
+                        if result:
+                            print(result)
+                            if is_vulnerable:
+                                found_vulnerabilities += 1
+                                vulnerable_urls.append(url + payload.strip())
                     except Exception as e:
-                        print(Fore.RED + f"[!] Error reading input file: {url_input}. Exception: {str(e)}")
-                        input(Fore.YELLOW + "[i] Press Enter to try again...")
-                        clear_screen()
-                        print(Fore.GREEN + "Welcome to the Open Redirect Testing Tool!\n")
+                        print(Fore.RED + f"[!] Exception occurred for payload {payload}: {str(e)}")
 
-            def prompt_for_payloads():
-                while True:
-                    try:
-                        payload_input = get_file_path("[?] Enter the path to the payloads file: ")
-                        if not os.path.isfile(payload_input):
-                            raise FileNotFoundError(f"File not found: {payload_input}")
-                        with open(payload_input) as file:
-                            payloads = [line.strip() for line in file if line.strip()]
-                        return payloads
-                    except Exception as e:
-                        print(Fore.RED + f"[!] Error reading payload file: {payload_input}. Exception: {str(e)}")
-                        input(Fore.YELLOW + "[i] Press Enter to try again...")
-                        clear_screen()
-                        print(Fore.GREEN + "Welcome to the Open Redirect Testing Tool!\n")
+            return found_vulnerabilities, vulnerable_urls
 
-            def print_scan_summary(total_found, total_scanned, start_time):
-                print(Fore.YELLOW + "\n[i] Scanning finished.")
-                print(Fore.YELLOW + f"[i] Total found: {total_found}")
-                print(Fore.YELLOW + f"[i] Total scanned: {total_scanned}")
-                print(Fore.YELLOW + f"[i] Time taken: {int(time.time() - start_time)} seconds")
+        def get_file_path(prompt_text):
+            completer = PathCompleter()
+            return prompt(prompt_text, completer=completer).strip()
 
-            def clear_screen():
-                os.system('cls' if os.name == 'nt' else 'clear')
-
-            def get_file_path(prompt_text):
-                completer = PathCompleter()
-                return prompt(prompt_text, completer=completer).strip()
-
-            def main():
-                clear_screen()
-
-                required_packages = {
-                    'requests': '2.28.1',
-                    'prompt_toolkit': '3.0.36',
-                    'colorama': '0.4.6'
-                }
-                check_and_install_packages(required_packages)
-
-                time.sleep(3)
-                clear_screen()
-
-
-                panel = Panel(
-                r"""
-  ____  ___    ____________   _  ___  __________
- / __ \/ _ \  / __/ ___/ _ | / |/ / |/ / __/ _  |
-/ /_/ / , _/ _\ \/ /__/ __ |/    /    / _// , _/
-\____/_/|_| /___/\___/_/ |_/_/|_/_/|_/___/_/|_| 
-                                                
-                                                        
-                    """,
-                style="bold green",
-                border_style="blue",
-                expand=False
-                )
-                rich_print(panel, "\n")
-                
-                print(Fore.GREEN + "Welcome to the Open Redirect Testing Tool!\n")
-
-                urls = prompt_for_urls()
-                payloads = prompt_for_payloads()
-                success_criteria_input = input("[?] Enter the success criteria patterns (comma-separated, e.g: 'https://google.com,redirected.com', press Enter for 'https://google.com'): ").strip()
-                success_criteria = [pattern.strip() for pattern in success_criteria_input.split(',')] if success_criteria_input else ['https://google.com']
-                
-                max_threads_input = input("[?] Enter the number of concurrent threads (0-10, press Enter for 5): ").strip()
-                max_threads = int(max_threads_input) if max_threads_input.isdigit() and 0 <= int(max_threads_input) <= 10 else 5
-
-                print(Fore.YELLOW + "\n[i] Loading, Please Wait...")
-                time.sleep(3)
-                clear_screen()
-                print(Fore.CYAN + "[i] Starting scan...\n")
-                print(f"{Fore.CYAN}[i] Checking for WAF on target URLs...")
-
-                for url in urls:
-                    headers = {'User-Agent': get_random_user_agent()}
-                    detect_waf(url, headers)
-                        
-                total_found = 0
-                total_scanned = 0
-                start_time = time.time()
-                vulnerable_urls = []
-
-                if payloads:
-                    for url in urls:
-                        print(Fore.YELLOW + f"\n[i] Scanning URL: {url}\n")
-                        found, urls_with_payloads = test_open_redirect(url, payloads, success_criteria, max_threads)
-                        total_found += found
-                        total_scanned += len(payloads)
-                        vulnerable_urls.extend(urls_with_payloads)
-                
-                print_scan_summary(total_found, total_scanned, start_time)
-                
-                save_results(vulnerable_urls)
-
-            if __name__ == "__main__":
+        def prompt_for_urls():
+            while True:
                 try:
-                    main()
-                except KeyboardInterrupt:
-                    print(Fore.YELLOW + "\nProgram terminated by the user!")
-                    sys.exit(0)
+                    url_input = get_file_path("[?] Enter the path to the input file containing the URLs (or press Enter to input a single URL): ")
+                    if url_input:
+                        if not os.path.isfile(url_input):
+                            raise FileNotFoundError(f"File not found: {url_input}")
+                        with open(url_input) as file:
+                            urls = [line.strip() for line in file if line.strip()]
+                        return urls
+                    else:
+                        single_url = input(Fore.BLUE + "[?] Enter a single URL to scan: ").strip()
+                        if single_url:
+                            return [single_url]
+                        else:
+                            print(Fore.RED + "[!] You must provide either a file with URLs or a single URL.")
+                            input(Fore.YELLOW + "\n[i] Press Enter to try again...")
+                            clear_screen()
+                            print(Fore.GREEN + "Welcome to the Open Redirect Testing Tool!\n")
                 except Exception as e:
-                    print(Fore.RED + f"[!] An unexpected error occurred: {e}")
-                    sys.exit(1)
+                    print(Fore.RED + f"[!] Error reading input file: {url_input}. Exception: {str(e)}")
+                    input(Fore.YELLOW + "[i] Press Enter to try again...")
+                    clear_screen()
+                    print(Fore.GREEN + "Welcome to the Open Redirect Testing Tool!\n")
 
-        except KeyboardInterrupt:
-            print(f"\n{Fore.YELLOW}Program terminated by the user!")
-            sys.exit(0)
+        def prompt_for_payloads():
+            while True:
+                try:
+                    payload_input = get_file_path("[?] Enter the path to the payloads file: ")
+                    if not os.path.isfile(payload_input):
+                        raise FileNotFoundError(f"File not found: {payload_input}")
+                    with open(payload_input) as file:
+                        payloads = [line.strip() for line in file if line.strip()]
+                    return payloads
+                except Exception as e:
+                    print(Fore.RED + f"[!] Error reading payload file: {payload_input}. Exception: {str(e)}")
+                    input(Fore.YELLOW + "[i] Press Enter to try again...")
+                    clear_screen()
+                    print(Fore.GREEN + "Welcome to the Open Redirect Testing Tool!\n")
+
+        def print_scan_summary(total_found, total_scanned, start_time):
+            print(Fore.YELLOW + "\n[i] Scanning finished.")
+            print(Fore.YELLOW + f"[i] Total found: {total_found}")
+            print(Fore.YELLOW + f"[i] Total scanned: {total_scanned}")
+            print(Fore.YELLOW + f"[i] Time taken: {int(time.time() - start_time)} seconds")
+
+        def save_results(vulnerable_urls):
+            save_prompt(vulnerable_urls)
+
+        def save_prompt(vulnerable_urls=[]):
+            save_choice = input(Fore.CYAN + "\n[?] Do you want to save the vulnerable URLs to a file? (y/n, press Enter for n): ").strip().lower()
+            if save_choice == 'y':
+                output_file = input(Fore.CYAN + "Enter the name of the output file (press Enter for 'vulnerable_urls.txt'): ").strip() or 'vulnerable_urls.txt'
+                with open(output_file, 'w') as f:
+                    for url in vulnerable_urls:
+                        f.write(url + '\n')
+                print(Fore.GREEN + f"Vulnerable URLs have been saved to {output_file}")
+                os._exit(0)
+            else:
+                print(Fore.YELLOW + "Vulnerable URLs will not be saved.")
+                os._exit(0)
+
+        def run_or_scanner():
+            clear_screen()
+
+            required_packages = {
+                'requests': '2.28.1',
+                'prompt_toolkit': '3.0.36',
+                'colorama': '0.4.6'
+            }
+            check_and_install_packages(required_packages)
+
+            time.sleep(1)
+            clear_screen()
+
+            panel = Panel("""
+        ____  ___    ____________   _  ___  __________
+       / __ \/ _ \  / __/ ___/ _ | / |/ / |/ / __/ _  |
+      / /_/ / , _/ _\ \/ /__/ __ |/    /    / _// , _/
+      \____/_/|_| /___/\___/_/ |_/_/|_/_/|_/___/_/|_| 
+                                                        
+                                                                
+                            """,
+            style="bold green",
+            border_style="blue",
+            expand=False
+            )
+            rich_print(panel, "\n")
+            print(Fore.GREEN + "Welcome to the Open Redirect Testing Tool!\n")
+
+            urls = prompt_for_urls()
+            payloads = prompt_for_payloads()
+            
+            max_threads_input = input("[?] Enter the number of concurrent threads (0-10, press Enter for 5): ").strip()
+            max_threads = int(max_threads_input) if max_threads_input.isdigit() and 0 <= int(max_threads_input) <= 10 else 5
+
+            print(Fore.YELLOW + "\n[i] Loading, Please Wait...")
+            time.sleep(1)
+            clear_screen()
+            print(Fore.CYAN + "[i] Starting scan...\n")
+            print(f"{Fore.CYAN}[i] Checking for WAF on target URLs...")
+
+            total_found = 0
+            total_scanned = 0
+            start_time = time.time()
+            vulnerable_urls = []
+
+            if payloads:
+                for url in urls:
+                    print(Fore.YELLOW + f"\n[i] Scanning URL: {url}\n")
+                    found, urls_with_payloads = test_open_redirect(url, payloads, max_threads)
+                    total_found += found
+                    total_scanned += len(payloads)
+                    vulnerable_urls.extend(urls_with_payloads)
+            
+            print_scan_summary(total_found, total_scanned, start_time)
+            save_results(vulnerable_urls)
+
+        if __name__ == "__main__":
+            try:
+                run_or_scanner()
+            except KeyboardInterrupt:
+                print(Fore.YELLOW + "\nProgram terminated by the user!")
+                exit(0)
+
+
 
 
     def run_lfi_scanner():
-       
-
-
-        import requests
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         import urllib.parse
-        import re
-        import os
-        import sys
-        import subprocess
-        import time
         from concurrent.futures import ThreadPoolExecutor, as_completed
-        from prompt_toolkit import prompt
-        from prompt_toolkit.completion import PathCompleter
-        from colorama import Fore, init
-        import logging
         from requests.adapters import HTTPAdapter
         from urllib3.util.retry import Retry
-
-
 
         USER_AGENTS = [
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -1272,7 +1090,6 @@ try:
             'Wallarm': ['x-wallarm-waf-check', 'wallarm'],
         }
 
-
         init(autoreset=True)
 
         def get_random_user_agent():
@@ -1284,8 +1101,6 @@ try:
                     __import__(package)
                 except ImportError:
                     subprocess.check_call([sys.executable, '-m', 'pip', 'install', f"{package}=={version}"])
-
-
 
         def get_retry_session(retries=3, backoff_factor=0.3, status_forcelist=(500, 502, 504)):
             session = requests.Session()
@@ -1445,7 +1260,7 @@ try:
             clear_screen()
 
             panel = Panel(
-            r"""
+            """
     __    __________   _____                                 
    / /   / ____/  _/  / ___/_________ _____  ____  ___  _____
   / /   / /_   / /    \__ \/ ___/ __ `/ __ \/ __ \/ _ \/ ___/
@@ -1465,7 +1280,7 @@ try:
 
             urls = prompt_for_urls()
             payloads = prompt_for_payloads()
-            success_criteria_input = input("[?] Enter the success criteria patterns (comma-separated, e.g: 'root:,admin:', press Enter for 'root:'): ").strip()
+            success_criteria_input = input("[?] Enter the success criteria patterns (comma-separated, e.g: 'root:,admin:', press Enter for 'root:x:0:'): ").strip()
             success_criteria = [pattern.strip() for pattern in success_criteria_input.split(',')] if success_criteria_input else ['root:x:0:']
             
             max_threads_input = input("[?] Enter the number of concurrent threads (0-10, press Enter for 5): ").strip()
@@ -1508,6 +1323,83 @@ try:
                 print(Fore.RED + f"[!] An unexpected error occurred: {e}")
                 sys.exit(1)
 
+    def run_update():
+
+        def load_config():
+            config_path = "config.yml"
+            if not os.path.isfile(config_path):
+                print(Color.YELLOW + "[!] Configuration file not found.")
+                exit()
+
+            with open(config_path, "r") as file:
+                try:
+                    config = yaml.safe_load(file)
+                except Exception as e:
+                    print(Color.YELLOW + f"[!] Error loading configuration file: {e}")
+                    exit()
+
+            global appIdentifier, appRepo, appDir, appExecName
+            try:
+                appIdentifier = config['app']['identifier']
+                appRepo = config['app']['repository']
+                appDir = config['app']['directory']
+                appExecName = config['app']['executable']
+            except KeyError as e:
+                print(Color.YELLOW + f"[!] Missing key in configuration file: {e}")
+                exit()
+
+            if not os.path.isdir(appDir):
+                print(Color.YELLOW + f"[!] The directory specified in config.yml does not exist: {appDir}")
+                exit()
+
+        def get_remote_version(repo_url):
+            try:
+                repo = Repo.clone_from(repo_url, 'temp_repo', depth=1)
+                latest_commit = repo.head.commit
+                shutil.rmtree('temp_repo')
+                return latest_commit.hexsha
+            except Exception as e:
+                print(Color.YELLOW + f"[!] Error accessing remote repository: {e}")
+                exit()
+
+        def get_local_version(file_path):
+            if os.path.isfile(file_path):
+                return os.popen(f"git log -1 --format=%H {file_path}").read().strip()
+            return None
+
+        def update_file():
+            try:
+                print(Color.GREEN + "[i] Updating file...")
+                temp_repo_dir = 'temp_repo'
+                if os.path.isdir(temp_repo_dir):
+                    shutil.rmtree(temp_repo_dir)
+                Repo.clone_from(appRepo, temp_repo_dir)
+                source_file = os.path.join(temp_repo_dir, appExecName)
+                if os.path.isfile(source_file):
+                    shutil.copy(source_file, appDir)
+                    print(Color.GREEN + "[i] Update completed.")
+                    clear_screen()
+                else:
+                    print(Color.YELLOW + "[!] File to update not found in the repository.")
+                shutil.rmtree(temp_repo_dir) 
+            except Exception as e:
+                print(Color.RED + f"[!] Error during update: {e}")
+                exit()
+
+        def run():
+            load_config()
+            local_version = get_local_version(os.path.join(appDir, appExecName))
+            remote_version = get_remote_version(appRepo)
+
+            if local_version != remote_version:
+                print(Color.GREEN + "[i] An update is available.")
+                update_file()
+            else:
+                print(Color.YELLOW + "[i] No update is needed.")
+
+        if __name__ == "__main__":
+            run()
+
 
     def handle_selection(selection):
         if selection == '1':
@@ -1527,6 +1419,10 @@ try:
             run_xss_scanner()
         elif selection == '5':
             clear_screen()
+            run_update()
+
+        elif selection == '6':
+            clear_screen()
             print_exit_menu()
 
         else:
@@ -1534,21 +1430,12 @@ try:
 
     def main():
         clear_screen()
-        required_packages = {
-            'aiohttp': '3.8.6',
-            'requests': '2.28.1',
-            'prompt_toolkit': '3.0.36',
-            'colorama': '0.4.6'
-        }
-
-        check_and_install_packages(required_packages)
-
-        sleep(3)
+        sleep(1)
         clear_screen()
 
         while True:
             display_menu()
-            choice = input(f"\n{Fore.CYAN}[?] Select an option (0-5): {Style.RESET_ALL}").strip()
+            choice = input(f"\n{Fore.CYAN}[?] Select an option (0-6): {Style.RESET_ALL}").strip()
             handle_selection(choice)
 
     if __name__ == "__main__":
@@ -1556,8 +1443,6 @@ try:
             main()
         except KeyboardInterrupt:
             print_exit_menu()
-            sys.exit(0)
-
+            
 except KeyboardInterrupt:
     print_exit_menu()
-    sys.exit(0)
