@@ -1,0 +1,5 @@
+app:  
+  identifier: "b1gn0se"  
+  repository: "https://github.com/b1gn0se/bug-scanner"  
+  directory: "~/bug-scanner"  
+  executable: "bug-scanner.py"
