@@ -24,7 +24,7 @@ git clone https://github.com/B1gN0Se/bug-scanner.git
 cd bug-scanner
 ```
 ```sh
-sudo pip3 install -r requirements
+sudo pip3 install -r requirements.txt
 ```
 ```sh
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
