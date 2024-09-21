@@ -9,3 +9,4 @@ prompt_toolkit
 webdriver-manager
 pyyaml
 gitpython
+Flask
