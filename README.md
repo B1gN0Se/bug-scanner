@@ -18,7 +18,7 @@
 
 
 ```sh
-https://github.com/B1gN0Se/bug-scanner.git
+git clone https://github.com/B1gN0Se/bug-scanner.git
 ```
 ```sh
 cd bug-scanner
