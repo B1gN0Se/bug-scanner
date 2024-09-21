@@ -1,7 +1,6 @@
-## bug-scanner
+# Bug-Scanner
 
-Tested on **Kali Linux**  
-
+**Description**: Bug-Scanner is a powerful and versatile multi-vulnerability scanner designed to detect various web application vulnerabilities, including Local File Inclusion (LFI), Open Redirects (OR), SQL Injection (SQLi), and Cross-Site Scripting (XSS).
 
 ## Features
 
@@ -15,31 +14,36 @@ Tested on **Kali Linux**
 - **User-friendly command-line interface**: Simple and intuitive.
 - **Save vulnerable URLs**: Option to save the results of vulnerable URLs to a file.
 
+## Installation (as normal user - NOT ADMIN)
 
-
-**Run the installation commands as root**
 
 ```sh
-git clone https://github.com/b1gn0se/bug-scanner
+https://github.com/B1gN0Se/bug-scanner.git
 ```
 ```sh
 cd bug-scanner
 ```
 ```sh
-pip3 install -r requirements.txt && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && dpkg -i google-chrome-stable_current_amd64.deb && rm google-chrome-stable_current_amd64.deb
+sudo pip3 install -r requirements
 ```
-
-**Run the python script as normal user**
+```sh
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+```
+```sh
+sudo dpkg -i google-chrome-stable_current_amd64.deb
+```
+```sh
+rm google-chrome-stable_current_amd64.deb
+```
 ```sh
 python3 bug-scanner.py
 ```
 
 to update the tool to the latest version
-```bash
+```sh
 just edit the config.yml file with your tool directory
 after pressing 5 and exiting from the tool run the tool again it will run with an updated version
 ```
-
 ## Input Information:
 
 - **Input URL/File**: You can provide a single URL or an input file containing a list of URLs to scan.
@@ -47,12 +51,7 @@ after pressing 5 and exiting from the tool run the tool again it will run with a
 - **Success Criteria:**:  Define the patterns or strings that indicate a successful exploitation attempt.
 - **Concurrent Threads:**: Set the number of threads for multi-threaded scanning.
 - **View and Save Results:**: Results will be displayed in real-time as the scan progresses.
+
 After the scan completes, you will have the option to save the URLs found to be vulnerable to a file for future reference.
 
-## Customization
-
-bug-scanner allows for various levels of customization to fit your specific testing needs:
-- **Custom Payloads:**: Create or modify payload files to suit specific vulnerability types or applications. Payloads should be tailored to the vulnerability being tested.
-- **Success Criteria:**: Adjust the success criteria patterns in the tool to identify successful exploitation attempts more accurately. For example, you can modify the tool to check for specific error messages or unique responses.
-
-**Note: To run the scanner correctly, always pass the URLs with empty parameters!**
+**NOTE: To run the scanner correctly, always pass the URLs with empty parameters!**
