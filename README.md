@@ -14,7 +14,7 @@
 - **User-friendly command-line interface**: Simple and intuitive.
 - **Save vulnerable URLs**: Option to save the results of vulnerable URLs to a file.
 
-## Installation (as normal user - NOT ADMIN)
+## Installation (as normal user - NOT ROOT)
 
 
 ```sh
