@@ -1,6 +1,6 @@
 # Bug-Scanner
 
-**Description**: Bug-Scanner is a powerful and versatile multi-vulnerability scanner designed to detect various web application vulnerabilities, including Local File Inclusion (LFI), Open Redirects (OR), SQL Injection (SQLi), and Cross-Site Scripting (XSS).
+**Description**: Bug-Scanner is a powerful and versatile multi-vulnerability scanner designed to detect various web application vulnerabilities, including Local File Inclusion (LFI), Open Redirects (OR), SQL Injection (SQLi), Carriage Return Line Feed (CRLF), and Cross-Site Scripting (XSS).
 
 ## Features
 
@@ -8,6 +8,7 @@
 - **OR Scanner**: Identify Open Redirect vulnerabilities.
 - **SQL Scanner**: Detect SQL Injection vulnerabilities.
 - **XSS Scanner**: Identify Cross-Site Scripting vulnerabilities.
+- **CRLF Scanner**: Identify CRLF vulnerabilities.
 - **Multi-threaded scanning**: Improved performance through multi-threading.
 - **Customizable payloads**: Adjust payloads to suit specific targets.
 - **Success criteria**: Modify success detection criteria for specific use cases.
