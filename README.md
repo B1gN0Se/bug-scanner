@@ -40,11 +40,6 @@ rm google-chrome-stable_current_amd64.deb
 python3 bug-scanner.py
 ```
 
-to update the tool to the latest version
-```sh
-just edit the config.yml file with your tool directory
-after pressing 5 and exiting from the tool run the tool again it will run with an updated version
-```
 ## Input Information:
 
 - **Input URL/File**: You can provide a single URL or an input file containing a list of URLs to scan.
