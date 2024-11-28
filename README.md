@@ -44,7 +44,7 @@ apt install -f
 ```sh
 rm google-chrome-stable_current_amd64.deb
 ```
-# Run the tool as normal user - not root
+## Run the tool as normal user - not root
 ```sh
 python3 bug-scanner.py
 ```
