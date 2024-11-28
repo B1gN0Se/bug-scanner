@@ -15,9 +15,14 @@
 - **User-friendly command-line interface**: Simple and intuitive.
 - **Save vulnerable URLs**: Option to save the results of vulnerable URLs to a file.
 
-## Installation (as normal user - NOT ROOT)
+## Installation (as root)
 
-
+```sh
+virtualenv bug_setup
+```
+```sh
+source bug_setup/bin/activate
+```
 ```sh
 git clone https://github.com/B1gN0Se/bug-scanner.git
 ```
@@ -25,17 +30,21 @@ git clone https://github.com/B1gN0Se/bug-scanner.git
 cd bug-scanner
 ```
 ```sh
-sudo pip3 install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 ```sh
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 ```
 ```sh
-sudo dpkg -i google-chrome-stable_current_amd64.deb
+dpkg -i google-chrome-stable_current_amd64.deb
+```
+```sh
+apt install -f
 ```
 ```sh
 rm google-chrome-stable_current_amd64.deb
 ```
+# Run the tool as normal user - not root
 ```sh
 python3 bug-scanner.py
 ```
