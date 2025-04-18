@@ -14,11 +14,12 @@
 - **Success criteria**: Modify success detection criteria for specific use cases.
 - **User-friendly command-line interface**: Simple and intuitive.
 - **Save vulnerable URLs**: Option to save the results of vulnerable URLs to a file.
+- **HTML Report Generation**: Generates a detailed HTML report of found vulnerabilities.
 
 ## Installation (as root)
 
 ```sh
-virtualenv bug_setup
+python3 -m venv bug_setup
 ```
 ```sh
 source bug_setup/bin/activate
