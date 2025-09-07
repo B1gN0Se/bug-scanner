@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-VERSION = 'v2'
+VERSION = 'v2.1.0'
 
 class Color:
     BLUE = '\033[94m'
@@ -35,6 +35,7 @@ try:
     import asyncio
     from selenium.webdriver.chrome.service import Service
     import re
+    from rich.progress import Progress
     import urllib.parse
     import requests
     import urllib3
@@ -983,6 +984,7 @@ try:
             scheme, netloc, path, query_string, fragment = urlsplit(url)
             if not scheme:
                 scheme = 'http'
+            
             query_params = parse_qs(query_string, keep_blank_values=True)
             for key in query_params.keys():
                 modified_params = query_params.copy()
@@ -990,6 +992,28 @@ try:
                 modified_query_string = urlencode(modified_params, doseq=True)
                 modified_url = urlunsplit((scheme, netloc, path, modified_query_string, fragment))
                 url_combinations.append(modified_url)
+            
+            if fragment:
+                if '=' in fragment:
+                    fragment_params = parse_qs(fragment, keep_blank_values=True)
+                    for key in fragment_params.keys():
+                        modified_fragment_params = fragment_params.copy()
+                        modified_fragment_params[key] = [payload]
+                        modified_fragment_string = urlencode(modified_fragment_params, doseq=True)
+                        modified_url = urlunsplit((scheme, netloc, path, query_string, modified_fragment_string))
+                        url_combinations.append(modified_url)
+                else:
+                    modified_url = urlunsplit((scheme, netloc, path, query_string, payload))
+                    url_combinations.append(modified_url)
+            
+            if not query_params and not fragment:
+                new_query = urlencode({'test': payload})
+                modified_url = urlunsplit((scheme, netloc, path, new_query, fragment))
+                url_combinations.append(modified_url)
+                
+                modified_url_fragment = urlunsplit((scheme, netloc, path, query_string, payload))
+                url_combinations.append(modified_url_fragment)
+            
             return url_combinations
 
         def create_driver():
@@ -997,7 +1021,6 @@ try:
             chrome_options.add_argument("--headless")
             chrome_options.add_argument("--no-sandbox")
             chrome_options.add_argument("--disable-dev-shm-usage")
-            chrome_options.add_argument("--disable-gpu")
             chrome_options.add_argument("--disable-extensions")
             chrome_options.add_argument("--disable-browser-side-navigation")
             chrome_options.add_argument("--disable-infobars")
@@ -2197,20 +2220,41 @@ try:
 
         def download_update(download_url, file_path):
             try:
-                with progress() as progress:
-                    task = progress.add_task("[cyan]Downloading update...", total=100)
-                    response = requests.get(download_url, stream=True)
+                try:
+                    from rich.progress import Progress
+                    
+                    with Progress() as progress_bar:
+                        task = progress_bar.add_task("Downloading update...", total=100)
+                        response = requests.get(download_url, stream=True)
+                        response.raise_for_status()
+                        
+                        total_size = int(response.headers.get('content-length', 0))
+                        block_size = 1024
+                        downloaded = 0
+                        
+                        with open(file_path, 'wb') as file:
+                            for data in response.iter_content(block_size):
+                                size = file.write(data)
+                                downloaded += size
+                                if total_size > 0:
+                                    progress_percentage = (downloaded / total_size) * 100
+                                    progress_bar.update(task, completed=progress_percentage)
+                                    
+                except ImportError:
+                    console.print("[cyan]Downloading update...[/cyan]")
+                    response = requests.get(download_url)
                     response.raise_for_status()
-                    total_size = int(response.headers.get('content-length', 0))
-                    block_size = 1024
                     with open(file_path, 'wb') as file:
-                        for data in response.iter_content(block_size):
-                            size = file.write(data)
-                            progress.update(task, advance=(size/total_size)*100)
+                        file.write(response.content)
+                        
                 console.print("[green][✓] Update downloaded successfully.[/green]")
                 return True
+                
             except requests.exceptions.RequestException as e:
                 console.print(f"[red][!] Error downloading update: {e}[/red]")
+                return False
+            except Exception as e:
+                console.print(f"[red][!] Unexpected error during download: {e}[/red]")
                 return False
 
         def normalize_version(v):
@@ -2219,7 +2263,7 @@ try:
 
             # Three components (major.minor.patch)
             parts = v.split('.')
-            while len(parts) < 3:
+            while len(parts) < 4:
                 parts.append('0')
             return '.'.join(parts)
 
